@@ -8,11 +8,23 @@ import (
 
 func main() {
 	router := gin.Default()
-	router.LoadHTMLGlob("src/frontend/index.html")
+
+	router.LoadHTMLFiles(
+		"src/frontend/index.html",
+		"src/frontend/corruptor/corruptor.html",
+	)
+
 	router.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.html", gin.H{
 			"title": "Main page",
 		})
 	})
-	router.Run()
+
+	router.GET("/corruptor", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "corruptor.html", gin.H{
+			"title": "Corruptor",
+		})
+	})
+
+	router.Run(":8000")
 }
