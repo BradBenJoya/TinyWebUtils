@@ -1,14 +1,33 @@
-const element = document.createElement("input")
-element.type = "file"
+const element = document.getElementById("file");
 
 element.addEventListener("cancel", () => {
-    console.log("Canceld file upload")
-})
+    console.log("Cancelled file upload");
+});
 
-element.addEventListener("change", () => {
-    if (element.files.length === 1) {
-        console.log("Files selected: ", element.files)
+element.addEventListener("change", async () => {
+    if (element.files.length === 0) return;
+
+    const file = element.files[0];
+    const formData = new FormData();
+    formData.append("files", file);
+
+    try {
+        const res = await fetch("/corruptor/api", {
+            method: "POST",
+            body: formData,
+        });
+        if (!res.ok) throw new Error("Request failed: " + res.status);
+
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = file.name + ".corrupted";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch (err) {
+        console.error(err);
     }
-})
-
-element.click()
+});
