@@ -7,7 +7,7 @@ element.addEventListener("cancel", () => {
 
 element.addEventListener("change", () => {
     if (element.files.length === 1) {
-        console.log("File selected: ", element.files[0])
+        console.log("Files selected: ", element.files)
     }
 })
 

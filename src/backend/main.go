@@ -9,7 +9,10 @@ import (
 func main() {
 	router := gin.Default()
 
-	router.LoadHTMLGlob("src/frontend/**/*.html")
+	router.LoadHTMLFiles(
+		"src/frontend/index.html",
+		"src/frontend/corruptor/corruptor.html",
+	)
 
 	router.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.html", gin.H{
