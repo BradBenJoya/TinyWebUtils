@@ -1,15 +1,29 @@
 package main
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	router := gin.Default()
-	router.GET("/", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
+	server := gin.Default()
+
+	server.LoadHTMLFiles("src/frontend/home/home.html", "src/frontend/corruptor/corruptor.html")
+
+	server.Static("/src", "./src")
+
+	server.GET("/", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "home.html", gin.H{
+			"title": "Main website",
 		})
 	})
-	router.Run()
+
+	server.GET("/file-corruptor", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "corruptor.html", gin.H{
+			"title": "File corruptor",
+		})
+	})
+
+	server.Run(":8080")
 }
