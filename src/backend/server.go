@@ -9,7 +9,7 @@ import (
 func main() {
 	server := gin.Default()
 
-	server.LoadHTMLFiles("src/frontend/home/home.html")
+	server.LoadHTMLFiles("src/frontend/home/home.html", "src/frontend/corruptor/corruptor.html")
 
 	server.Static("/src", "./src")
 
@@ -20,7 +20,9 @@ func main() {
 	})
 
 	server.GET("/file-corruptor", func(c *gin.Context) {
-		c.String(http.StatusOK, "File corruptor page")
+		c.HTML(http.StatusOK, "corruptor.html", gin.H{
+			"title": "File corruptor",
+		})
 	})
 
 	server.Run(":8080")
