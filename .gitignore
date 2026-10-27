@@ -25,4 +25,10 @@ go.work.sum
 .env
 
 # Project
-/bin
+/bin/*
+!/bin/corruptor/
+!/bin/tinywebutils/
+/bin/corruptor/*
+/bin/tinywebutils/*
+!/bin/corruptor/.gitkeep
+!/bin/tinywebutils/.gitkeep
