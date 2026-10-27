@@ -1,15 +1,28 @@
 package main
 
 import (
+	"log"
 	"net/http"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"runtime"
 
 	"github.com/gin-gonic/gin"
 )
 
+func corruptorPath() string {
+	executable := "corruptor"
+	if runtime.GOOS == "windows" {
+		executable += ".exe"
+	}
+	return filepath.Join("bin", "corruptor", executable)
+}
+
 func main() {
 	server := gin.Default()
+
+	gin.SetMode(gin.ReleaseMode)
 
 	server.LoadHTMLFiles("src/frontend/home/home.html", "src/frontend/corruptor/corruptor.html")
 
@@ -28,17 +41,8 @@ func main() {
 	})
 
 	server.POST("/file-corruptor/api", func(c *gin.Context) {
-		form, err := c.MultipartForm()
+		file, err := c.FormFile("file")
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"error": "Failed to retrieve form files",
-			})
-			return
-		}
-
-		files := form.File["file"]
-
-		if len(files) == 0 {
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error": "No files uploaded",
 			})
@@ -48,30 +52,42 @@ func main() {
 		tmpDir, err := os.MkdirTemp("", "tmp-*")
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
-				"error": "Failed to create temporary directory",
+				"error": "Failed to create temporary directory to store uploaded file",
 			})
 			return
 		}
 		defer os.RemoveAll(tmpDir)
 
-		for _, file := range files {
-			dst := filepath.Join(tmpDir, filepath.Base(file.Filename))
-
-			if err := c.SaveUploadedFile(file, dst); err != nil {
-				c.JSON(http.StatusInternalServerError, gin.H{
-					"error": "Failed to save uploaded file to disk",
-				})
-				return
-			}
+		filename := filepath.Base(file.Filename)
+		uploadedPath := filepath.Join(tmpDir, filename)
+		if err := c.SaveUploadedFile(file, uploadedPath); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": "Failed to save uploaded file to disk",
+			})
+			return
 		}
 
-		c.JSON(http.StatusOK, gin.H{
-			"message": "Files uploaded successfully",
-			"count":   len(files),
-		})
+		command := exec.CommandContext(c.Request.Context(), corruptorPath(), uploadedPath)
+		output, err := command.CombinedOutput()
+		if err != nil {
+			log.Printf("Corruptor failed for uploaded file %q: %v: %s", filename, err, output)
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": "Failed to corrupt uploaded file",
+			})
+			return
+		}
+
+		corruptedPath := uploadedPath + ".corrupted"
+		if _, err := os.Stat(corruptedPath); err != nil {
+			log.Printf("Corruptor did not create output for uploaded file %q: %v", filename, err)
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": "Corruptor did not produce an output file",
+			})
+			return
+		}
+
+		c.FileAttachment(corruptedPath, filename+".corrupted")
 	})
 
-	server.Run(":8080")
-
-	server.Run(":8080")
+	server.Run(":8000")
 }

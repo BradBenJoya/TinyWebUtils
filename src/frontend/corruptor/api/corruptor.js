@@ -14,7 +14,7 @@ fileInput.addEventListener("change", async () => {
     }
 
     try {
-        const response = await fetch("http://localhost:8080/file-corruptor/api", {
+        const response = await fetch("http://localhost:8000/file-corruptor/api", {
             method: "POST",
             body: formData
         });

@@ -2,5 +2,5 @@ const corruptor = document.getElementById("corruptor");
 
 corruptor.addEventListener("click", () => {
     console.log("Clicked");
-    window.location.href = "http://localhost:8080/file-corruptor";
+    window.location.href = "http://localhost:8000/file-corruptor";
 });
