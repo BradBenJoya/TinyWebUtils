@@ -1,4 +1,5 @@
 const fileInput = document.getElementById("file-to-corrupt");
+const homeButton = document.getElementById("home");
 
 fileInput.addEventListener("change", async () => {
     const files = fileInput.files;
@@ -36,4 +37,8 @@ fileInput.addEventListener("change", async () => {
     } catch (error) {
         console.error("Upload failed:", error);
     }
+});
+
+homeButton.addEventListener("click", () => {
+    window.location.href = "/";
 });
