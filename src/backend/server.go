@@ -20,11 +20,13 @@ func corruptorPath() string {
 }
 
 func main() {
+	gin.SetMode(gin.ReleaseMode)
 	server := gin.Default()
 
-	gin.SetMode(gin.ReleaseMode)
-
-	server.LoadHTMLFiles("src/frontend/home/home.html", "src/frontend/corruptor/corruptor.html")
+	server.LoadHTMLFiles(
+		"src/frontend/home/home.html",
+		"src/frontend/corruptor/corruptor.html",
+	)
 
 	server.Static("/src", "./src")
 
@@ -79,7 +81,7 @@ func main() {
 
 		corruptedPath := uploadedPath + ".corrupted"
 		if _, err := os.Stat(corruptedPath); err != nil {
-			log.Printf("Corruptor did not create output for uploaded file %q: %v", filename, err)
+			log.Printf("Corruptor did not create output for uploaded file %q: %v (output: %s)", filename, err, output)
 			c.JSON(http.StatusInternalServerError, gin.H{
 				"error": "Corruptor did not produce an output file",
 			})
@@ -89,5 +91,7 @@ func main() {
 		c.FileAttachment(corruptedPath, filename+".corrupted")
 	})
 
-	server.Run(":8000")
+	if err := server.Run(":8000"); err != nil {
+		log.Fatal(err)
+	}
 }

@@ -24,6 +24,15 @@ fileInput.addEventListener("change", async () => {
         }
 
         console.log("Files uploaded successfully");
+
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = files[0].name + ".corrupted";
+        a.click();
+        URL.revokeObjectURL(url);
+        console.log("Downloading file")
     } catch (error) {
         console.error("Upload failed:", error);
     }
