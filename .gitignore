@@ -32,3 +32,4 @@ go.work.sum
 /bin/tinywebutils/*
 !/bin/corruptor/.gitkeep
 !/bin/tinywebutils/.gitkeep
+/tools

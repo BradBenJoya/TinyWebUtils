@@ -90,8 +90,8 @@ func main() {
 
 		c.FileAttachment(corruptedPath, filename+".corrupted")
 	})
-
 	if err := server.Run(":8000"); err != nil {
 		log.Fatal(err)
 	}
+	log.Print("Running server on port 8000")
 }
