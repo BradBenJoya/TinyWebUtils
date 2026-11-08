@@ -24,8 +24,9 @@ func main() {
 	server := gin.Default()
 
 	server.LoadHTMLFiles(
-		"src/frontend/home/home.html",
-		"src/frontend/corruptor/corruptor.html",
+		"src/frontend/home/index.html",
+		"src/frontend/corruptor/index.html",
+		"src/frontend/converter/index.html",
 	)
 
 	server.Static("/src", "./src")
@@ -39,6 +40,12 @@ func main() {
 	server.GET("/file-corruptor", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "corruptor.html", gin.H{
 			"title": "File corruptor",
+		})
+	})
+
+	server.GET("/file-converter", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "converter.html", gin.H{
+			"title": "File converter",
 		})
 	})
 

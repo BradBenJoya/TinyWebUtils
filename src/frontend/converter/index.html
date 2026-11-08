@@ -1,0 +1,20 @@
+{{define "converter.html"}}
+<!DOCTYPE html>
+<html lang="en">
+<body>
+    <h1>File converter</h1>
+    <p>Convert all file media</p>
+
+    <select id="file-extension">
+        <option value="wav">wav</option>
+        <option value="mp3">mp3</option>
+    </select>
+    <input type="file" id="file-to-convert" multiple>
+
+    <button id="home" type="button">
+            Home page
+        </button>
+    <script src="/src/frontend/converter/api/converter.js"></script>
+</body>
+</html>
+{{end}}
